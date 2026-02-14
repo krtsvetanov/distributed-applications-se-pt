@@ -54,9 +54,9 @@ This repository is part of the distributed applications course for Software Engi
 ### Daily exercises schedule
 
 * First day:
-  * exercises - [1](https://github.com/pkyurkchiev/distributed-applications-se-p/tree/master/exercises/net_8/01)
+  * exercises - [1](https://github.com/pkyurkchiev/distributed-applications-se-p/tree/master/exercises/01)
 * Second day:
-  * exercises - [2](https://github.com/pkyurkchiev/distributed-applications-se-d/tree/master/exercises/net_8/02)
+  * exercises - [2](https://github.com/pkyurkchiev/distributed-applications-se-d/tree/master/exercises/02)
 
 
 ## Additional materials
