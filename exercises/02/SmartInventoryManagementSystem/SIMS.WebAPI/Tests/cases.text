@@ -1,0 +1,60 @@
+﻿using static System.Net.WebRequestMethods;
+
+Приемаме, че базовият URL адрес на твоето API е: https://localhost:5001/odata/Products
+
+1.Филтриране(Filter)
+Сценарий: Търсене на продукти с цена между 100 и 1000, които са от конкретен доставчик (напр. "TechGlobal").
+
+Използваме логически оператори ge (greater or equal), le (less or equal) и and.
+
+Филтрираме по свързана таблица (Supplier/Name), без да я зареждаме цялата.
+
+HTTP
+GET /odata/Products?$filter=Price ge 100 and Price le 1000 and Supplier/Name eq 'TechGlobal'
+2. Разширяване на релации (Expand)
+Сценарий: Зареждане на продукта, заедно с пълните данни за неговата Категория и Доставчик (SQL JOIN еквивалент).
+
+Това предотвратява проблема "N+1 заявки", като връща всичко в един JSON.
+
+HTTP
+GET /odata/Products?$expand=Category, Supplier
+3. Сортиране (OrderBy)
+Сценарий: Списък на продуктите, подредени по наличност в склада (от най-много към най-малко).
+
+desc = низходящ ред (descending).
+
+asc = възходящ ред (по подразбиране).
+
+HTTP
+GET /odata/Products?$orderby=StockQuantity desc
+4. Проекция на данни (Select)
+Сценарий: За dropdown меню или лек мобилен изглед ни трябват само името, цената и ID-то на продукта.
+
+Това връща JSON, съдържащ само тези полета, което драстично намалява трафика.
+
+HTTP
+GET /odata/Products?$select=Id, Name, Price
+5. Комплексна заявка (The "Mega" Query)
+Сценарий: "Покажи ми най-скъпите 10 налични лаптопа, сортирани по цена, като ми покажеш и кой е доставчикът им, както и общия брой намерени резултати."
+
+Тази заявка комбинира всичко:
+
+$filter: Само категория 'Laptops' и количество над 0.
+
+$orderby: Най - скъпите най - отгоре.
+
+$expand: Зареди данните за доставчика.
+
+$select: Върни само име, цена, наличност (и разгърнатия доставчик).
+
+$top: Вземи само първите 10.
+
+$count: Върни общия брой записи, които отговарят на филтъра (дори ако връщаме само 10).
+
+HTTP
+GET /odata/Products?$filter=Category/Name eq 'Laptops' and StockQuantity gt 0&$orderby=Price desc&$expand=Supplier&$select=Name, Price, StockQuantity&$top=10&$count=true
+Бонус: Вложена йерархия(Nested Expand)
+Тъй като имаш категории с йерархия (Parent Category), можеш да поискаш продукта, неговата категория, И родителя на неговата категория:
+
+HTTP
+GET /odata/Products?$expand=Category($expand=ParentCategory)
